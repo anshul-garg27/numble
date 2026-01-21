@@ -109,7 +109,7 @@ const Game = () => {
   }
   
   return (
-    <div className="min-h-screen min-h-[100dvh] flex flex-col px-4 py-3 page-container safe-top">
+    <div className="game-layout px-4 py-3 safe-top">
       <Header 
         roomCode={roomCode} 
         partnerName={otherPlayer?.name}
@@ -121,7 +121,8 @@ const Game = () => {
         }}
       />
       
-      <div className="flex-1 flex flex-col">
+      {/* Scrollable content area */}
+      <div className="game-content">
         {/* Turn Indicator */}
         <div className="mb-3">
           <TurnIndicator 
@@ -131,103 +132,104 @@ const Game = () => {
         </div>
         
         {/* Guess History */}
-        <div className="flex-1 mb-3 overflow-hidden">
+        <div className="mb-3">
           <GuessHistory 
             guesses={myGuesses} 
             playerId={playerId}
             title="Your Guesses"
           />
         </div>
-        
-        {/* Feedback Overlay */}
-        <AnimatePresence>
-          {showFeedback && (
+      </div>
+      
+      {/* Feedback Overlay */}
+      <AnimatePresence>
+        {showFeedback && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+              initial={{ y: 50 }}
+              animate={{ y: 0 }}
+              className="glass-card-strong rounded-2xl p-6 text-center mx-6"
             >
-              <motion.div
-                initial={{ y: 50 }}
-                animate={{ y: 0 }}
-                className="glass-card-strong rounded-2xl p-6 text-center mx-6"
-              >
-                <div className="flex justify-center gap-8 mb-4">
-                  {/* Match = digits exist */}
-                  <div className="text-center">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.1, type: 'spring' }}
-                      className="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center mb-2"
-                    >
-                      <span className="text-2xl">🎯</span>
-                    </motion.div>
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="font-heading font-bold text-3xl text-green-600"
-                    >
-                      {showFeedback.match}
-                    </motion.p>
-                    <p className="text-xs text-gray-500">Match</p>
-                  </div>
-                  {/* Position = correct position */}
-                  <div className="text-center">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.2, type: 'spring' }}
-                      className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center mb-2"
-                    >
-                      <span className="text-2xl">📍</span>
-                    </motion.div>
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="font-heading font-bold text-3xl text-blue-600"
-                    >
-                      {showFeedback.position}
-                    </motion.p>
-                    <p className="text-xs text-gray-500">Position</p>
-                  </div>
-                </div>
-                
-                {showFeedback.position === 4 ? (
-                  <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="font-heading font-bold text-lg text-green-600"
+              <div className="flex justify-center gap-8 mb-4">
+                {/* Match = digits exist */}
+                <div className="text-center">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: 'spring' }}
+                    className="w-14 h-14 rounded-xl bg-green-100 flex items-center justify-center mb-2"
                   >
-                    🎉 YOU CRACKED IT!
-                  </motion.p>
-                ) : (
+                    <span className="text-2xl">🎯</span>
+                  </motion.div>
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-gray-500 text-sm"
+                    transition={{ delay: 0.2 }}
+                    className="font-heading font-bold text-3xl text-green-600"
                   >
-                    Keep trying!
+                    {showFeedback.match}
                   </motion.p>
-                )}
-              </motion.div>
+                  <p className="text-xs text-gray-500">Match</p>
+                </div>
+                {/* Position = correct position */}
+                <div className="text-center">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: 'spring' }}
+                    className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center mb-2"
+                  >
+                    <span className="text-2xl">📍</span>
+                  </motion.div>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="font-heading font-bold text-3xl text-blue-600"
+                  >
+                    {showFeedback.position}
+                  </motion.p>
+                  <p className="text-xs text-gray-500">Position</p>
+                </div>
+              </div>
+              
+              {showFeedback.position === 4 ? (
+                <motion.p
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="font-heading font-bold text-lg text-green-600"
+                >
+                  🎉 YOU CRACKED IT!
+                </motion.p>
+              ) : (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-gray-500 text-sm"
+                >
+                  Keep trying!
+                </motion.p>
+              )}
             </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Input Area */}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Fixed input area at bottom */}
+      <div className="game-input-area">
         <AnimatePresence mode="wait">
           {isMyTurn ? (
             <motion.div
               key="input"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
-              className="safe-bottom"
+              exit={{ opacity: 0, y: 20 }}
             >
               <Card className="mb-3 p-4" animate={false}>
                 <DigitDisplay digits={digits} />
@@ -254,9 +256,9 @@ const Game = () => {
           ) : (
             <motion.div
               key="waiting"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
+              exit={{ opacity: 0, y: 20 }}
             >
               <Card className="text-center py-8">
                 <motion.div

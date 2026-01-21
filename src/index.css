@@ -27,17 +27,32 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  /* Prevent resize on keyboard open */
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--gradient-warm);
   background-attachment: fixed;
-  min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100%;
+  height: 100%;
   color: #292524;
   overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior-y: contain;
+  /* Fix for iOS keyboard */
+  position: fixed;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+#root {
+  min-height: 100%;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Animated background */
@@ -68,7 +83,7 @@ body::before {
 }
 
 .safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 20px);
+  padding-bottom: max(env(safe-area-inset-bottom, 0), 16px);
 }
 
 /* ===== SCROLLBAR ===== */
@@ -407,11 +422,14 @@ body::before {
   width: 16px;
 }
 
-/* ===== PAGE TRANSITIONS ===== */
+/* ===== PAGE CONTAINER - FIXED HEIGHT ===== */
 .page-container {
   position: relative;
   z-index: 1;
   animation: pageEnter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
 @keyframes pageEnter {
@@ -423,6 +441,28 @@ body::before {
     opacity: 1; 
     transform: translateY(0) scale(1);
   }
+}
+
+/* ===== GAME SCREEN LAYOUT - KEYBOARD AWARE ===== */
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+.game-input-area {
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+  background: linear-gradient(to top, rgba(254, 247, 237, 0.95), transparent);
+  padding-top: 8px;
 }
 
 /* ===== FLOATING ELEMENTS ===== */
@@ -439,28 +479,28 @@ body::before {
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 380px) {
   .key-premium {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
+    width: 58px;
+    height: 58px;
+    font-size: 22px;
     border-radius: 14px;
   }
   
   .digit-box-premium {
-    width: 50px;
-    height: 64px;
-    font-size: 28px;
+    width: 48px;
+    height: 62px;
+    font-size: 26px;
     border-radius: 12px;
   }
   
   .badge-match,
   .badge-position {
     padding: 4px 8px;
-    font-size: 12px;
+    font-size: 11px;
   }
   
   .guess-row-premium {
     padding: 10px 12px;
-    gap: 8px;
+    gap: 6px;
   }
 }
 
@@ -476,6 +516,11 @@ body::before {
     height: 76px;
     font-size: 34px;
   }
+}
+
+/* ===== PREVENT ZOOM ON INPUT FOCUS (iOS) ===== */
+input, select, textarea {
+  font-size: 16px !important;
 }
 
 /* ===== SUCCESS ANIMATION ===== */
